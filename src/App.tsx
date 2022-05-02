@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          HO DEPLOYATO DA GITHUB. MIAO
+          HO DEPLOYATO DA GITHUB. MIAO BAO BAO
         </p>
       </header>
     </div>
