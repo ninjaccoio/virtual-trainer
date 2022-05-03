@@ -1,18 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
+import MuiBottomNavigation from './components/MuiBottomNavigation';
+import HomePage from './pages/Home';
+import StatsPage from './pages/Stats';
+import ProfilePage from './pages/Profile';
+import SettingsPage from './pages/Settings';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          HO DEPLOYATO DA GITHUB. MIAO BAO BAO
-        </p>
-      </header>
-    </div>
-  );
-}
+export interface IAppProps {}
+
+const App: React.FunctionComponent<IAppProps> = (props) => {
+    return (
+        <BrowserRouter>
+            <MuiBottomNavigation />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="stats" element={<StatsPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="settings">
+                    <Route index element={<SettingsPage />} />
+                    <Route path=":number" element={<SettingsPage />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
+};
 
 export default App;
