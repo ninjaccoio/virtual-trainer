@@ -1,17 +1,18 @@
 import {Button} from '@mui/material';
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import logging from '../config/logging';
+import IPageProps from '../interfaces/page.interface';
 
-export interface IHomePageProps {}
-
-const HomePage: React.FunctionComponent<IHomePageProps> = (props) => {
-    const navigate = useNavigate();
-
+const HomePage: React.FunctionComponent<IPageProps> = (props) => {
     return (
         <div>
             <h1>Home</h1>
             <Button component={Link} to="profile">
-                Vai a Profilo, ho usato il bottone col link
+                Vai a Profilo se sei loggato, ho usato il bottone col link
+            </Button>
+            <Button component={Link} to="/auth/signup">
+                Vai a login, ho usato il bottone col link
             </Button>
         </div>
     );

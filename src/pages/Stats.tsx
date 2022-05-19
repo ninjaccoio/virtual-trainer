@@ -1,9 +1,7 @@
 import React from 'react';
-import {BrowserRouter, Routes} from 'react-router-dom';
+import IPageProps from '../interfaces/page.interface';
 
-export interface IStatsPageProps {}
-
-const StatsPage: React.FunctionComponent<IStatsPageProps> = (props) => {
+const StatsPage: React.FunctionComponent<IPageProps> = (props) => {
     return (
         <div>
             <h1>Statistiche</h1>

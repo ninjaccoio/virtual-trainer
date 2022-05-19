@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import {Button} from '@mui/material';
+import IPageProps from '../interfaces/page.interface';
 
-export interface ISettingsPageProps {}
-
-const SettingsPage: React.FunctionComponent<ISettingsPageProps> = (props) => {
+const SettingsPage: React.FunctionComponent<IPageProps> = (props) => {
     const [message, setMessage] = useState('');
     const {number} = useParams();
     const navigate = useNavigate();
