@@ -1,5 +1,5 @@
 import {Route, Routes} from 'react-router-dom';
-import ProtectedRoute from '../modules/auth/ProtectedRoute';
+import ProtectedRoute from '../services/auth/ProtectedRoute';
 import MuiBottomNavigation from '../components/MuiBottomNavigation';
 import HomePage from './Home';
 import StatsPage from './Stats';

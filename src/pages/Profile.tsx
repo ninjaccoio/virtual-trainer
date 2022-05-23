@@ -3,7 +3,7 @@ import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {auth} from '../config/firebase';
 import IPageProps from '../interfaces/page.interface';
-import {getAuth, signOut} from 'firebase/auth';
+import {signOut} from 'firebase/auth';
 import logging from '../config/logging';
 
 const ProfilePage: React.FunctionComponent<IPageProps> = (props) => {

@@ -1,4 +1,4 @@
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {ReactNode} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {onAuthStateChanged} from 'firebase/auth';
 import {auth} from '../../config/firebase';
@@ -19,7 +19,7 @@ const ProtectedRoute: React.FunctionComponent<IAuthRouteProps> = (props) => {
             logging.info(user.displayName);
         } else {
             logging.info('non sono loggato');
-            navigate('/auth/signup');
+            navigate('/login');
         }
     });
 
