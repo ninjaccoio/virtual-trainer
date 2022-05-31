@@ -13,12 +13,7 @@ const ProtectedRoute: React.FunctionComponent<IAuthRouteProps> = (props) => {
     const navigate = useNavigate();
 
     onAuthStateChanged(auth, (user) => {
-        logging.info('onAuthStateChange');
-
-        if (user) {
-            logging.info(user.displayName);
-        } else {
-            logging.info('non sono loggato');
+        if (!user || !user.emailVerified) {
             navigate('/login');
         }
     });

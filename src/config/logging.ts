@@ -26,6 +26,14 @@ const error = (message: any, namespace?: string) => {
     }
 };
 
+const success = (message: any, namespace?: string) => {
+    if (typeof message === 'string') {
+        console.log(`[${getDate()}] [${namespace || DEFAULT_NAMESPACE}] [SUCCESS] ${message}`);
+    } else {
+        console.log(`[${getDate()}] [${namespace || DEFAULT_NAMESPACE}] [SUCCESS]`, message);
+    }
+};
+
 const getDate = () => {
     return new Date().toISOString();
 };
@@ -33,7 +41,8 @@ const getDate = () => {
 const logging = {
     info,
     warn,
-    error
+    error,
+    success
 };
 
 export default logging;
