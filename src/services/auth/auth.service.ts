@@ -1,10 +1,9 @@
 import {auth, db} from '../../config/firebase';
 import {createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut} from 'firebase/auth';
-import {collection, addDoc, doc, Timestamp, getDoc, getDocs, setDoc} from 'firebase/firestore';
+import {collection, doc, Timestamp, getDoc, setDoc} from 'firebase/firestore';
 import logging from '../../config/logging';
 
 import {User} from '../../interfaces/auth/auth.interface';
-import {resultingClientExists} from 'workbox-core/_private';
 
 class AuthService {
     async forgotPwd(email: string) {
@@ -45,7 +44,8 @@ class AuthService {
         try {
             await signInWithEmailAndPassword(auth, email, password)
                 .then((usr) => {
-                    result = {success: true, target: 'any', error: '', uid: usr.user.uid};
+                    if (usr.user.emailVerified) result = {success: true, target: 'any', error: '', uid: usr.user.uid};
+                    else result = {success: false, target: 'all', error: 'Email non verificata', uid: usr.user.uid};
                 })
                 .catch((err) => {
                     switch (err.code) {
@@ -67,29 +67,38 @@ class AuthService {
         return result;
     }
 
-    async register(username: string, email: string, password: string) {
-        await createUserWithEmailAndPassword(auth, email, password).then(async (res) => {
-            const userData: User = {
-                id: res.user.uid,
-                username: username,
-                email: email,
-                createdAt: Timestamp.fromDate(new Date())
-            };
+    async register(email: string, password: string) {
+        let result = {success: false, target: 'all', error: 'Errore non gestito', uid: ''};
 
-            const docRef = doc(collection(db, 'users'));
-            await setDoc(docRef, userData).then(() => {
-                logging.info('User Saved');
-                sendEmailVerification(res.user).then(() => {
-                    console.info('Email di verifica inviata');
-                    return true;
+        await createUserWithEmailAndPassword(auth, email, password)
+            .then(async (res) => {
+                const userData: User = {
+                    id: res.user.uid,
+                    email: email,
+                    createdAt: Timestamp.fromDate(new Date())
+                };
+
+                const docRef = doc(collection(db, 'users'));
+                await setDoc(docRef, userData).then(async () => {
+                    result = {success: true, target: 'any', error: '', uid: res.user.uid};
+                    await sendEmailVerification(res.user);
                 });
-            });
-        });
+            })
+            .catch((err) => {
+                switch (err.code) {
+                    case 'auth/email-already-in-use':
+                        result = {success: false, target: 'email', error: 'E-Mail gia in uso', uid: ''};
+                        break;
 
-        return false;
+                    default:
+                        result = {success: false, target: 'all', error: 'Errore non gestito default', uid: ''};
+                }
+            });
+
+        return result;
     }
 
-    async getUser(uid: string) {
+    private async getUser(uid: string) {
         const docRef = doc(db, 'users', uid);
         const docSnap = await getDoc(docRef);
 
@@ -100,10 +109,9 @@ class AuthService {
         }
     }
 
-    async setUser(uid: string, email: string, username: string = '') {
+    private async setUser(uid: string, email: string) {
         const userData: User = {
             id: uid,
-            username: username,
             email: email,
             createdAt: Timestamp.fromDate(new Date())
         };

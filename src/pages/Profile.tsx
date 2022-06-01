@@ -1,18 +1,15 @@
 import {Button} from '@mui/material';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import {auth} from '../config/firebase';
 import IPageProps from '../interfaces/page.interface';
-import {signOut} from 'firebase/auth';
-import logging from '../config/logging';
+import AuthService from '../services/auth/auth.service';
 
 const ProfilePage: React.FunctionComponent<IPageProps> = (props) => {
     const navigate = useNavigate();
 
     const firebaseSignOut = async () => {
-        logging.info('LogOut');
-        signOut(auth);
-        navigate('/auth/signup');
+        AuthService.logout();
+        navigate('/login');
     };
 
     return (

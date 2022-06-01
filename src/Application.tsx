@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import ForgotPwdPage from './pages/auth/ForgotPwd';
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
+import VerifyEmailPage from './pages/auth/VerifyEmail';
 import {Main} from './pages/Main';
 
 export interface IApplicationProps {}
@@ -14,6 +15,7 @@ const Application: React.FC<IApplicationProps> = (props) => {
                 <Route path="/login" element={<LoginPage name="Login" />} />
                 <Route path="/register" element={<RegisterPage name="Register" />} />
                 <Route path="/forgot-pwd" element={<ForgotPwdPage name="Forgot Pwd" />} />
+                <Route path="/verify-email" element={<VerifyEmailPage name="Verify Email" />} />
                 <Route path="/*" element={<Main />} />
             </Routes>
         </BrowserRouter>

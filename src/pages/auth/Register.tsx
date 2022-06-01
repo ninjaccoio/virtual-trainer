@@ -1,40 +1,49 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import IPageProps from '../../interfaces/page.interface';
-import {Paper, Avatar, TextField, Button, FormControlLabel, FormGroup, Stack, InputAdornment, Typography} from '@mui/material';
-import Checkbox from '@mui/material/Checkbox';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import {Paper, Avatar, TextField, Button, Stack, InputAdornment, Typography} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import MailOutlinedIcon from '@mui/icons-material/MailOutline';
-import authService from '../../services/auth/auth.service';
+import AuthService from '../../services/auth/auth.service';
 
 const RegisterPage: React.FC<IPageProps> = (props) => {
     const navigate = useNavigate();
 
-    const [username, setUsername] = useState('');
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [pwd, setPwd] = useState('');
+    const [rePwd, setRePwd] = useState('');
+    const [errEmailMsg, setErrEmailMsg] = useState('');
+    const [errPwdMsg, setErrPwdMsg] = useState('');
 
-    const goBack = () => {
-        navigate(-1);
-    };
+    useEffect(() => {
+        setErrEmailMsg('');
+        setErrPwdMsg('');
+    }, [email, pwd]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        authService.register(username, email, pwd);
+        setLoading(true);
 
-        /*
-        logging.info('submit');
-        if (email == 'ciao@miao.com') setErrMsg('la cipolla non e verde');
-        logging.info(email);
-        logging.info(pwd);
-        logging.info(rememberMe);
-        //setEmail('');
-        //setPwd('');
-        setRememberMe(false);
-        logging.info(errMsg);
-        */
+        setErrEmailMsg('');
+        setErrPwdMsg('');
+
+        if (pwd === rePwd) {
+            const res = await AuthService.register(email, pwd);
+
+            if (res.success) {
+                setEmail('');
+                setPwd('');
+                setRePwd('');
+                navigate('/verify-email');
+            } else {
+                if (res.target === 'email') setErrEmailMsg(res.error);
+                if (res.target === 'pwd') setErrPwdMsg(res.error);
+            }
+        } else setErrPwdMsg('Le Password non sono uguali');
+
+        setLoading(false);
     };
 
     const paperStyle = {padding: 20, heigth: 'auto', width: '85%', margin: '20px auto'};
@@ -50,29 +59,13 @@ const RegisterPage: React.FC<IPageProps> = (props) => {
                         <h2>Register</h2>
 
                         <TextField
-                            label="Username"
-                            variant="outlined"
-                            placeholder="Username"
-                            autoComplete="off"
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <AccountCircleOutlinedIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                            fullWidth
-                            required
-                        />
-
-                        <TextField
                             label="Email"
                             variant="outlined"
                             type="email"
                             placeholder="E-Mail"
                             autoComplete="off"
+                            error={errEmailMsg !== ''}
+                            helperText={errEmailMsg !== '' ? errEmailMsg : ''}
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
                             InputProps={{
@@ -90,6 +83,8 @@ const RegisterPage: React.FC<IPageProps> = (props) => {
                             variant="outlined"
                             type="password"
                             placeholder="Password"
+                            error={errPwdMsg !== ''}
+                            helperText={errPwdMsg !== '' ? errPwdMsg : ''}
                             onChange={(e) => setPwd(e.target.value)}
                             value={pwd}
                             InputProps={{
@@ -103,7 +98,27 @@ const RegisterPage: React.FC<IPageProps> = (props) => {
                             required
                         />
 
-                        <Button type="submit" variant="contained" fullWidth>
+                        <TextField
+                            label="Conferma Password"
+                            variant="outlined"
+                            type="password"
+                            placeholder="Conferma Password"
+                            error={errPwdMsg !== ''}
+                            helperText={errPwdMsg !== '' ? errPwdMsg : ''}
+                            onChange={(e) => setRePwd(e.target.value)}
+                            value={rePwd}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockOutlinedIcon />
+                                    </InputAdornment>
+                                )
+                            }}
+                            fullWidth
+                            required
+                        />
+
+                        <Button type="submit" variant="contained" disabled={loading} fullWidth>
                             Registrati
                         </Button>
 
